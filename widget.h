@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QListWidgetItem>
 
 class QLineEdit;
 class QPushButton;
@@ -16,10 +17,12 @@ private:
     QPushButton *addButton;
     QPushButton *deleteButton;
     QListWidget *taskList;
+    QListWidget *doneList;
 
 private slots:
     void addTask();
     void deleteTask();
+    void moveTaskToDone(QListWidgetItem *item);
 
 
 public:
