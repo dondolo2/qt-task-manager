@@ -44,19 +44,16 @@ Widget::Widget(QWidget *parent)
 void Widget::addTask()
 {
     QString task = taskInput->text().trimmed();
-    if(!task.isEmpty()) {
+    if(task.isEmpty()) {
         QMessageBox::warning(this, "Input Error", "Task cannot be empty.");
         return;
-        // taskList->addItem(task);
-        // taskInput->clear();
-    } /*else {
-        QMessageBox::warning(this, "Input Error", "Task cannot be empty.");
-    }*/
-    QListWidgetItem *item = new QListWidgetItem(item);
+    }
+    QListWidgetItem *item = new QListWidgetItem(task);
     item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
     item->setCheckState(Qt::Unchecked);
     taskList->addItem(item);
     taskInput->clear();
+
 
 }
 
@@ -71,11 +68,18 @@ void Widget::deleteTask()
 
 }
 
-// void Widget::moveTaskToDone(QListWidgetItem *item)
-// {
+void Widget::moveTaskToDone(QListWidgetItem *item)
+{
+    if(item->checkState() == Qt::Checked) {
+        // Transfer text to doneList as a new item
+        QListWidgetItem *doneItem = new QListWidgetItem(item->text());
+        doneItem->setFlags(doneItem->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
+        doneItem->setCheckState(Qt::Checked);
+        doneList->addItem(doneItem);
+        delete item;
+    }
 
-
-// }
+}
 
 
 Widget::~Widget() {}
