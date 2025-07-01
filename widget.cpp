@@ -68,6 +68,25 @@ void Widget::addTask()
         QMessageBox::warning(this, "Input Error", "Task cannot be empty.");
         return;
     }
+
+    // Check for duplicates in taskList
+    for(int i = 0; i < taskList->count(); ++i) {
+        QListWidgetItem *existingItem = taskList->item(i);
+        if(existingItem->text().compare(task, Qt::CaseInsensitive) == 0) {
+            QMessageBox::warning(this, "Duplicate Task", "This task already exist in the Completed list.");
+            return;
+        }
+    }
+
+    // Check for duplicates in the doneList
+    for(int i = 0; i < doneList->count(); ++i) {
+        QListWidgetItem *existingItem = doneList->item(i);
+        if(existingItem->text().compare(task, Qt::CaseInsensitive) == 0) {
+            QMessageBox::warning(this, "Duplicate Task", "This task already exist in the To-Do list.");
+            return;
+        }
+    }
+
     QListWidgetItem *item = new QListWidgetItem(task);
     item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
     item->setCheckState(Qt::Unchecked);
