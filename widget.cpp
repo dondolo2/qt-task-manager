@@ -79,9 +79,13 @@ void Widget::addTask()
 
 void Widget::deleteTask()
 {
-    QListWidgetItem *item = taskList->currentItem();
-    if(item) {
-        delete item;
+    QListWidgetItem *taskItem = taskList->currentItem();
+    QListWidgetItem *doneItem = doneList->currentItem();
+
+    if(taskItem) {
+        delete taskItem;
+    } else if(doneItem) {
+        delete doneItem;
     } else {
         QMessageBox::information(this, "No Selection", "Please select a task to delete.");
     }
