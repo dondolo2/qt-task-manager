@@ -23,6 +23,7 @@ private slots:
     void addTask();
     void deleteTask();
     void moveTaskToDone(QListWidgetItem *item);
+    void moveBackToTaskList(QListWidgetItem *item);
 
 
 public:

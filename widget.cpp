@@ -39,6 +39,7 @@ Widget::Widget(QWidget *parent)
     connect(addButton, SIGNAL(clicked(bool)), this, SLOT(addTask()));
     connect(deleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteTask()));
     connect(taskList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveTaskToDone(QListWidgetItem*)));
+    connect(doneList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveBackToTaskList(QListWidgetItem*)));
 }
 
 void Widget::addTask()
@@ -76,6 +77,19 @@ void Widget::moveTaskToDone(QListWidgetItem *item)
         doneItem->setFlags(doneItem->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
         doneItem->setCheckState(Qt::Checked);
         doneList->addItem(doneItem);
+        delete item;
+    }
+
+}
+
+void Widget::moveBackToTaskList(QListWidgetItem *item)
+{
+    if(item->checkState() == Qt::Unchecked) {
+        QListWidgetItem *uncheckedItem = new QListWidgetItem(item->text());
+        uncheckedItem->setFlags(uncheckedItem->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
+        uncheckedItem->setCheckState(Qt::Unchecked);
+        taskList->addItem(uncheckedItem);
+
         delete item;
     }
 
