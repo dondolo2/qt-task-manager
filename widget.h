@@ -7,6 +7,7 @@
 class QLineEdit;
 class QPushButton;
 class QListWidget;
+class QLabel;
 
 class Widget : public QWidget
 {
@@ -18,6 +19,9 @@ private:
     QPushButton *deleteButton;
     QListWidget *taskList;
     QListWidget *doneList;
+    QLabel *mainLabel;
+    QLabel *taskListLabel;
+    QLabel *doneLabel;
 
 private slots:
     void addTask();

@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QCheckBox>
+#include <QLabel>
 
 
 Widget::Widget(QWidget *parent)
@@ -20,6 +21,21 @@ Widget::Widget(QWidget *parent)
     addButton = new QPushButton("Add Taks", this);
     deleteButton = new QPushButton("Delete Task", this);
 
+    mainLabel = new QLabel("Action Board Tracker", this);
+    QFont titleFont;
+    titleFont.setPointSize(18);
+    titleFont.setBold(true);
+    mainLabel->setFont(titleFont);
+    mainLabel->setAlignment(Qt::AlignCenter);
+
+
+    taskListLabel = new QLabel("To-Do Task", this);
+    doneLabel = new QLabel("Completed Tasks", this);
+    QFont labelFont;
+    labelFont.setBold(true);
+    taskListLabel->setFont(labelFont);
+    doneLabel->setFont(labelFont);
+
     taskList = new QListWidget(this);
     doneList = new QListWidget(this);
 
@@ -29,8 +45,11 @@ Widget::Widget(QWidget *parent)
     hbox->addWidget(taskInput);
     hbox->addWidget(addButton);
 
+    vbox->addWidget(mainLabel);
     vbox->addLayout(hbox);
+    vbox->addWidget(taskListLabel);
     vbox->addWidget(taskList);
+    vbox->addWidget(doneLabel);
     vbox->addWidget(doneList);
     vbox->addWidget(deleteButton);
 
