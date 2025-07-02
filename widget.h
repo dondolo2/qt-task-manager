@@ -28,6 +28,7 @@ private slots:
     void deleteTask();
     void moveTaskToDone(QListWidgetItem *item);
     void moveBackToTaskList(QListWidgetItem *item);
+    void checkEditedItemForDuplicates(QListWidgetItem *item);
 
 
 public:

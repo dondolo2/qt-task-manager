@@ -12,7 +12,7 @@
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
-    setWindowTitle("Task Manager");
+    setWindowTitle("Action Board Tracker");
     resize(700, 500);
 
     taskInput = new QLineEdit(this);
@@ -59,6 +59,8 @@ Widget::Widget(QWidget *parent)
     connect(deleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteTask()));
     connect(taskList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveTaskToDone(QListWidgetItem*)));
     connect(doneList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveBackToTaskList(QListWidgetItem*)));
+    connect(taskList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(checkEditedItemForDuplicates(QListWidgetItem*)));
+    connect(doneList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(checkEditedItemForDuplicates(QListWidgetItem*)));
 }
 
 void Widget::addTask()
@@ -73,7 +75,7 @@ void Widget::addTask()
     for(int i = 0; i < taskList->count(); ++i) {
         QListWidgetItem *existingItem = taskList->item(i);
         if(existingItem->text().compare(task, Qt::CaseInsensitive) == 0) {
-            QMessageBox::warning(this, "Duplicate Task", "This task already exist in the Completed list.");
+            QMessageBox::warning(this, "Duplicate Task", "This task already exist in the To-Do list.");
             return;
         }
     }
@@ -82,7 +84,7 @@ void Widget::addTask()
     for(int i = 0; i < doneList->count(); ++i) {
         QListWidgetItem *existingItem = doneList->item(i);
         if(existingItem->text().compare(task, Qt::CaseInsensitive) == 0) {
-            QMessageBox::warning(this, "Duplicate Task", "This task already exist in the To-Do list.");
+            QMessageBox::warning(this, "Duplicate Task", "This task already exist in the Completed list.");
             return;
         }
     }
@@ -136,6 +138,42 @@ void Widget::moveBackToTaskList(QListWidgetItem *item)
     }
 
 }
+
+void Widget::checkEditedItemForDuplicates(QListWidgetItem *item)
+{
+    // If checkbox state changed, ignore this change (we handle that elsewhere)
+        // Qt::CheckState state = item->checkState();
+        QString text = item->text().trimmed();
+
+        if (text.isEmpty()) {
+            QMessageBox::warning(this, "Empty Task", "Task name cannot be empty.");
+            item->setText("Unnamed Task");
+            return;
+        }
+
+        // Count how many items have the same text across both lists
+        int duplicateCount = 0;
+
+        auto countDuplicates = [&](QListWidget *list) {
+            for (int i = 0; i < list->count(); ++i) {
+                QListWidgetItem *current = list->item(i);
+                if (current == item) continue;
+                if (current->text().compare(text, Qt::CaseInsensitive) == 0) {
+                    duplicateCount++;
+                }
+            }
+        };
+
+        countDuplicates(taskList);
+        countDuplicates(doneList);
+
+        if (duplicateCount > 0) {
+            QMessageBox::warning(this, "Duplicate Edit", "Another task with this name already exists.");
+            // Optional: revert to previous text (setText can't do that directly unless you store it)
+            item->setText(text + " (edited)");
+        }
+    }
+
 
 
 Widget::~Widget() {}
