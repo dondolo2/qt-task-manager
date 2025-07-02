@@ -142,7 +142,13 @@ void Widget::moveBackToTaskList(QListWidgetItem *item)
 void Widget::checkEditedItemForDuplicates(QListWidgetItem *item)
 {
     // If checkbox state changed, ignore this change (we handle that elsewhere)
-        // Qt::CheckState state = item->checkState();
+    static Qt::CheckState previousState = Qt::Unchecked;
+
+    if (item->checkState() != previousState) {
+        previousState = item->checkState();
+        return;
+    }
+
         QString text = item->text().trimmed();
 
         if (text.isEmpty()) {
