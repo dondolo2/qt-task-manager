@@ -22,6 +22,8 @@ private:
     QLabel *mainLabel;
     QLabel *taskListLabel;
     QLabel *doneLabel;
+    QString m_lastTaskText;
+    QString m_lastDoneText;
 
 private slots:
     void addTask();
@@ -29,6 +31,8 @@ private slots:
     void moveTaskToDone(QListWidgetItem *item);
     void moveBackToTaskList(QListWidgetItem *item);
     void checkEditedItemForDuplicates(QListWidgetItem *item);
+    void handleTaskListItemChanged(QListWidgetItem *item);
+    void handleDoneListItemChanged(QListWidgetItem *item);
 
 
 public:

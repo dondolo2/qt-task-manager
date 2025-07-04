@@ -62,4 +62,3 @@
 - [ ] Create a `feature/ui`, `feature/storage` etc. branches for major work
 - [ ] Merge to `main` only after full testing
 - [ ] Tag first working version as `v1.0`
-
