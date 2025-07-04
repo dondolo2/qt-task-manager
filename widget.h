@@ -22,8 +22,6 @@ private:
     QLabel *mainLabel;
     QLabel *taskListLabel;
     QLabel *doneLabel;
-    QString m_lastTaskText;
-    QString m_lastDoneText;
 
 private slots:
     void addTask();
