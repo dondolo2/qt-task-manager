@@ -18,8 +18,10 @@ Widget::Widget(QWidget *parent)
     taskInput = new QLineEdit(this);
     taskInput->setPlaceholderText("Enter a new task...");
 
-    addButton = new QPushButton("Add Taks", this);
-    deleteButton = new QPushButton("Delete Task", this);
+    addButton = new QPushButton("Add Task", this);
+    moveToBinButton = new QPushButton("Move To Bin", this);
+    restoreButton = new QPushButton("Restore Task", this);
+    permanentDeleteButton = new QPushButton("Delete Permanently");
 
     mainLabel = new QLabel("Action Board Tracker", this);
     QFont titleFont;
@@ -43,29 +45,35 @@ Widget::Widget(QWidget *parent)
     recyclingBinList = new QListWidget(this);
 
     QVBoxLayout *vbox = new QVBoxLayout(this);
-    QHBoxLayout *hbox = new QHBoxLayout(this);
+    QHBoxLayout *hbox1 = new QHBoxLayout(this);
+    QHBoxLayout *hbox2 = new QHBoxLayout(this);
 
-    hbox->addWidget(taskInput);
-    hbox->addWidget(addButton);
+    hbox1->addWidget(taskInput);
+    hbox1->addWidget(addButton);
+    hbox2->addWidget(restoreButton);
+    hbox2->addWidget(permanentDeleteButton);
 
     vbox->addWidget(mainLabel);
-    vbox->addLayout(hbox);
+    vbox->addLayout(hbox1);
     vbox->addWidget(taskListLabel);
     vbox->addWidget(taskList);
     vbox->addWidget(doneLabel);
     vbox->addWidget(doneList);
-    vbox->addWidget(deleteButton);
+    vbox->addWidget(moveToBinButton);
     vbox->addWidget(recyclingBinLabel);
     vbox->addWidget(recyclingBinList);
+    vbox->addLayout(hbox2);
+
 
     setLayout(vbox);
 
     connect(addButton, SIGNAL(clicked(bool)), this, SLOT(addTask()));
-    connect(deleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteTask()));
+    connect(moveToBinButton, SIGNAL(clicked(bool)), this, SLOT(moveToBin()));
     connect(taskList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveTaskToDone(QListWidgetItem*)));
     connect(doneList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveBackToTaskList(QListWidgetItem*)));
     connect(taskList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(checkEditedItemForDuplicates(QListWidgetItem*)));
     connect(doneList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(checkEditedItemForDuplicates(QListWidgetItem*)));
+    connect(permanentDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deletePermanently()));
 }
 
 void Widget::addTask()
@@ -103,20 +111,32 @@ void Widget::addTask()
 
 }
 
-void Widget::deleteTask()
+void Widget::moveToBin()
 {
     QListWidgetItem *taskItem = taskList->currentItem();
     QListWidgetItem *doneItem = doneList->currentItem();
 
-    if(taskItem) {
+    QListWidgetItem *selectedItem = taskItem ? taskItem : doneItem;
+
+    if (!selectedItem) {
+        QMessageBox::information(this, "No Selection", "Please select a task to move to bin");
+        return;
+    }
+
+    QListWidgetItem *binItem = new QListWidgetItem(selectedItem->text());
+    binItem->setFlags(binItem->flags() | Qt::ItemIsUserCheckable);
+    binItem->setCheckState(selectedItem->checkState());
+    recyclingBinList->addItem(binItem);
+
+    if (taskItem) {
         delete taskItem;
-    } else if(doneItem) {
+    } else if (doneItem) {
         delete doneItem;
-    } else {
-        QMessageBox::information(this, "No Selection", "Please select a task to delete.");
     }
 
 }
+
+
 
 void Widget::moveTaskToDone(QListWidgetItem *item)
 {
@@ -141,6 +161,31 @@ void Widget::moveBackToTaskList(QListWidgetItem *item)
 
         delete item;
     }
+}
+
+void Widget::restore()
+{
+
+}
+
+void Widget::deletePermanently()
+{
+    QListWidgetItem *selectedItem = recyclingBinList->currentItem();
+
+    if(selectedItem) {
+        delete selectedItem;
+    } else {
+        QMessageBox::information(this, "No Selection", "Please select a task to delete.");
+    }
+
+    // if(taskItem) {
+    //     delete taskItem;
+    // } else if(doneItem) {
+    //     delete doneItem;
+    // } else {
+    //     QMessageBox::information(this, "No Selection", "Please select a task to delete.");
+    // }
+
 }
 
 

@@ -16,7 +16,9 @@ class Widget : public QWidget
 private:
     QLineEdit *taskInput;
     QPushButton *addButton;
-    QPushButton *deleteButton;
+    QPushButton *moveToBinButton;
+    QPushButton *restoreButton;
+    QPushButton *permanentDeleteButton;
     QListWidget *taskList;
     QListWidget *doneList;
     QListWidget *recyclingBinList;
@@ -27,9 +29,11 @@ private:
 
 private slots:
     void addTask();
-    void deleteTask();
+    void moveToBin();
     void moveTaskToDone(QListWidgetItem *item);
     void moveBackToTaskList(QListWidgetItem *item);
+    void restore();
+    void deletePermanently();
 
 
 public:
