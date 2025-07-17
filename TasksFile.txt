@@ -1,0 +1,12 @@
+To-Do Tasks:
+- clean room
+- math project
+
+Completed Tasks:
+- grocery
+- gym
+- study
+
+Recycling Bin:
+- respond emails
+- cook

@@ -20,6 +20,7 @@ private:
     QPushButton *moveToBinButton;
     QPushButton *restoreButton;
     QPushButton *permanentDeleteButton;
+    QPushButton *saveButton;
     // List Sections
     QListWidget *taskList;
     QListWidget *doneList;
@@ -37,6 +38,7 @@ private slots:
     void moveBackToTaskList(QListWidgetItem *item);
     void restore();
     void deletePermanently();
+    void saveToFile();
 
 
 public:

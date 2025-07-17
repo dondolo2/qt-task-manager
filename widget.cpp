@@ -7,6 +7,9 @@
 #include <QMessageBox>
 #include <QCheckBox>
 #include <QLabel>
+#include <QFile>
+#include <QTextStream>
+#include <QFileDialog>
 
 
 Widget::Widget(QWidget *parent)
@@ -22,6 +25,7 @@ Widget::Widget(QWidget *parent)
     moveToBinButton = new QPushButton("Move To Bin", this);
     restoreButton = new QPushButton("Restore Task", this);
     permanentDeleteButton = new QPushButton("Delete Permanently");
+    saveButton = new QPushButton("Save to File", this);
 
     mainLabel = new QLabel("Action Board Tracker", this);
     QFont titleFont;
@@ -52,6 +56,7 @@ Widget::Widget(QWidget *parent)
     hbox1->addWidget(addButton);
     hbox2->addWidget(restoreButton);
     hbox2->addWidget(permanentDeleteButton);
+    hbox2->addWidget(saveButton);
 
     vbox->addWidget(mainLabel);
     vbox->addLayout(hbox1);
@@ -74,6 +79,7 @@ Widget::Widget(QWidget *parent)
     connect(doneList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveBackToTaskList(QListWidgetItem*)));
     connect(restoreButton, SIGNAL(clicked(bool)), this, SLOT(restore()));
     connect(permanentDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deletePermanently()));
+    connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveToFile()));
 }
 
 void Widget::addTask()
@@ -207,6 +213,51 @@ void Widget::deletePermanently()
         QMessageBox::information(this, "No Selection", "Please select a task to delete.");
     }
 }
+
+void Widget::saveToFile()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Save Tasks", "", "Text Files (*.txt)");
+
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "File Error", "Could not open file for writing.");
+        return;
+    }
+
+    QTextStream out(&file);
+
+    // ---- To-Do Section ----
+    out << "To-Do Tasks:\n";
+    for (int i = 0; i < taskList->count(); i++) {
+        QListWidgetItem *item = taskList->item(i);
+        out << "- " << item->text() << "\n";
+    }
+    out << "\n";
+
+    // ---- Completed Section ----
+    out << "Completed Tasks:\n";
+    for  (int i = 0; i < doneList->count(); i++) {
+        QListWidgetItem *item = doneList->item(i);
+        out << "- " << item->text() << "\n";
+    }
+    out << "\n";
+
+    // ---- Recycle Bin Section ----
+    out << "Recycling Bin:\n";
+    for (int i = 0; i < recyclingBinList->count(); i++) {
+        QListWidgetItem *item = recyclingBinList->item(i);
+        out << "- " << item->text() << "\n";
+    }
+
+    file.close();
+    QMessageBox::information(this, "Saved", "Tasks saved successfully!");
+}
+
 
 
 Widget::~Widget() {}
