@@ -15,13 +15,16 @@ class Widget : public QWidget
 
 private:
     QLineEdit *taskInput;
+    // Buttons
     QPushButton *addButton;
     QPushButton *moveToBinButton;
     QPushButton *restoreButton;
     QPushButton *permanentDeleteButton;
+    // List Sections
     QListWidget *taskList;
     QListWidget *doneList;
     QListWidget *recyclingBinList;
+    // Labels
     QLabel *mainLabel;
     QLabel *taskListLabel;
     QLabel *doneLabel;

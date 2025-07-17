@@ -68,11 +68,11 @@ Widget::Widget(QWidget *parent)
     setLayout(vbox);
 
     connect(addButton, SIGNAL(clicked(bool)), this, SLOT(addTask()));
+    connect(taskInput, SIGNAL(returnPressed()), this, SLOT(addTask()));
     connect(moveToBinButton, SIGNAL(clicked(bool)), this, SLOT(moveToBin()));
     connect(taskList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveTaskToDone(QListWidgetItem*)));
     connect(doneList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveBackToTaskList(QListWidgetItem*)));
-    connect(taskList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(checkEditedItemForDuplicates(QListWidgetItem*)));
-    connect(doneList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(checkEditedItemForDuplicates(QListWidgetItem*)));
+    connect(restoreButton, SIGNAL(clicked(bool)), this, SLOT(restore()));
     connect(permanentDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deletePermanently()));
 }
 
@@ -81,6 +81,7 @@ void Widget::addTask()
     QString task = taskInput->text().trimmed();
     if(task.isEmpty()) {
         QMessageBox::warning(this, "Input Error", "Task cannot be empty.");
+        taskInput->setFocus();
         return;
     }
 
@@ -89,6 +90,7 @@ void Widget::addTask()
         QListWidgetItem *existingItem = taskList->item(i);
         if(existingItem->text().compare(task, Qt::CaseInsensitive) == 0) {
             QMessageBox::warning(this, "Duplicate Task", "This task already exist in the To-Do list.");
+            taskInput->setFocus();
             return;
         }
     }
@@ -98,6 +100,7 @@ void Widget::addTask()
         QListWidgetItem *existingItem = doneList->item(i);
         if(existingItem->text().compare(task, Qt::CaseInsensitive) == 0) {
             QMessageBox::warning(this, "Duplicate Task", "This task already exist in the Completed list.");
+            taskInput->setFocus();
             return;
         }
     }
@@ -107,8 +110,7 @@ void Widget::addTask()
     item->setCheckState(Qt::Unchecked);
     taskList->addItem(item);
     taskInput->clear();
-
-
+    taskInput->setFocus();
 }
 
 void Widget::moveToBin()
@@ -126,6 +128,13 @@ void Widget::moveToBin()
     QListWidgetItem *binItem = new QListWidgetItem(selectedItem->text());
     binItem->setFlags(binItem->flags() | Qt::ItemIsUserCheckable);
     binItem->setCheckState(selectedItem->checkState());
+    // Save source as Metadata
+    if (taskItem) {
+        binItem->setData(Qt::UserRole, "taskItem");
+    } else if (doneItem) {
+        binItem->setData(Qt::UserRole, "doneItem");
+    }
+
     recyclingBinList->addItem(binItem);
 
     if (taskItem) {
@@ -165,7 +174,27 @@ void Widget::moveBackToTaskList(QListWidgetItem *item)
 
 void Widget::restore()
 {
+    QListWidgetItem *selectedItem = recyclingBinList->currentItem();
 
+    if (!selectedItem) {
+        QMessageBox::information(this, "No Selection", "Please select a task to restore.");
+        return;
+    }
+
+    QString source = selectedItem->data(Qt::UserRole).toString(); // Getting MetaData
+
+    QListWidgetItem *restoredItem = new QListWidgetItem(selectedItem->text());
+    restoredItem->setFlags(restoredItem->flags() | Qt::ItemIsUserCheckable);
+    restoredItem->setCheckState(restoredItem->checkState());
+
+    if (source == "doneItem") {
+        restoredItem->setCheckState(Qt::Checked);
+        doneList->addItem(restoredItem);
+    } else {
+        restoredItem->setCheckState(Qt::Unchecked);
+        taskList->addItem(restoredItem);
+    }
+    delete selectedItem;
 }
 
 void Widget::deletePermanently()
@@ -177,15 +206,6 @@ void Widget::deletePermanently()
     } else {
         QMessageBox::information(this, "No Selection", "Please select a task to delete.");
     }
-
-    // if(taskItem) {
-    //     delete taskItem;
-    // } else if(doneItem) {
-    //     delete doneItem;
-    // } else {
-    //     QMessageBox::information(this, "No Selection", "Please select a task to delete.");
-    // }
-
 }
 
 
