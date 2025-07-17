@@ -31,13 +31,16 @@ Widget::Widget(QWidget *parent)
 
     taskListLabel = new QLabel("To-Do Task", this);
     doneLabel = new QLabel("Completed Tasks", this);
+    recyclingBinLabel = new QLabel("Recycling Bin", this);
     QFont labelFont;
     labelFont.setBold(true);
     taskListLabel->setFont(labelFont);
     doneLabel->setFont(labelFont);
+    recyclingBinLabel->setFont(labelFont);
 
     taskList = new QListWidget(this);
     doneList = new QListWidget(this);
+    recyclingBinList = new QListWidget(this);
 
     QVBoxLayout *vbox = new QVBoxLayout(this);
     QHBoxLayout *hbox = new QHBoxLayout(this);
@@ -52,6 +55,8 @@ Widget::Widget(QWidget *parent)
     vbox->addWidget(doneLabel);
     vbox->addWidget(doneList);
     vbox->addWidget(deleteButton);
+    vbox->addWidget(recyclingBinLabel);
+    vbox->addWidget(recyclingBinList);
 
     setLayout(vbox);
 
@@ -90,7 +95,7 @@ void Widget::addTask()
     }
 
     QListWidgetItem *item = new QListWidgetItem(task);
-    item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
+    item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
     item->setCheckState(Qt::Unchecked);
     taskList->addItem(item);
     taskInput->clear();
@@ -118,7 +123,7 @@ void Widget::moveTaskToDone(QListWidgetItem *item)
     if(item->checkState() == Qt::Checked) {
         // Transfer text to doneList as a new item
         QListWidgetItem *doneItem = new QListWidgetItem(item->text());
-        doneItem->setFlags(doneItem->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
+        doneItem->setFlags(doneItem->flags() | Qt::ItemIsUserCheckable);
         doneItem->setCheckState(Qt::Checked);
         doneList->addItem(doneItem);
         delete item;
@@ -130,47 +135,11 @@ void Widget::moveBackToTaskList(QListWidgetItem *item)
 {
     if(item->checkState() == Qt::Unchecked) {
         QListWidgetItem *uncheckedItem = new QListWidgetItem(item->text());
-        uncheckedItem->setFlags(uncheckedItem->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
+        uncheckedItem->setFlags(uncheckedItem->flags() | Qt::ItemIsUserCheckable);
         uncheckedItem->setCheckState(Qt::Unchecked);
         taskList->addItem(uncheckedItem);
 
         delete item;
-    }
-
-}
-
-void Widget::checkEditedItemForDuplicates(QListWidgetItem *item)
-{
-    // If checkbox state changed, ignore this change (we handle that elsewhere)
-    Qt::CheckState state = item->checkState();
-    QString text = item->text().trimmed();
-
-    if (text.isEmpty()) {
-        QMessageBox::warning(this, "Empty Task", "Task name cannot be empty.");
-        item->setText("Unnamed Task");
-        return;
-    }
-
-    // Count how many items have the same text across both lists
-    int duplicateCount = 0;
-
-    auto countDuplicates = [&](QListWidget *list) {
-        for (int i = 0; i < list->count(); ++i) {
-            QListWidgetItem *current = list->item(i);
-            if (current == item) continue;
-            if (current->text().compare(text, Qt::CaseInsensitive) == 0) {
-                duplicateCount++;
-            }
-        }
-    };
-
-    countDuplicates(taskList);
-    countDuplicates(doneList);
-
-    if (duplicateCount > 0) {
-        QMessageBox::warning(this, "Duplicate Edit", "Another task with this name already exists.");
-        // Optional: revert to previous text (setText can't do that directly unless you store it)
-        item->setText(text + " (edited)");
     }
 }
 

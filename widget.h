@@ -19,18 +19,17 @@ private:
     QPushButton *deleteButton;
     QListWidget *taskList;
     QListWidget *doneList;
+    QListWidget *recyclingBinList;
     QLabel *mainLabel;
     QLabel *taskListLabel;
     QLabel *doneLabel;
+    QLabel *recyclingBinLabel;
 
 private slots:
     void addTask();
     void deleteTask();
     void moveTaskToDone(QListWidgetItem *item);
     void moveBackToTaskList(QListWidgetItem *item);
-    void checkEditedItemForDuplicates(QListWidgetItem *item);
-    void handleTaskListItemChanged(QListWidgetItem *item);
-    void handleDoneListItemChanged(QListWidgetItem *item);
 
 
 public:
