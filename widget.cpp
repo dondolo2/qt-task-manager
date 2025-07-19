@@ -23,9 +23,10 @@ Widget::Widget(QWidget *parent)
 
     addButton = new QPushButton("Add Task", this);
     moveTaskToBinButton = new QPushButton("Move Task To Bin", this);
-    moveDoneToBinButton = new QPushButton("Move Done To Bin", this);
+    moveDoneToBinButton = new QPushButton("Move Completed To Bin", this);
     restoreButton = new QPushButton("Restore Task", this);
     permanentDeleteButton = new QPushButton("Delete Permanently");
+    loadButton = new QPushButton("Load from File", this);
     saveButton = new QPushButton("Save to File", this);
 
     mainLabel = new QLabel("Action Board Tracker", this);
@@ -52,12 +53,14 @@ Widget::Widget(QWidget *parent)
     QVBoxLayout *vbox = new QVBoxLayout(this);
     QHBoxLayout *hbox1 = new QHBoxLayout(this);
     QHBoxLayout *hbox2 = new QHBoxLayout(this);
+    QHBoxLayout *hbox3 = new QHBoxLayout(this);
 
     hbox1->addWidget(taskInput);
     hbox1->addWidget(addButton);
     hbox2->addWidget(restoreButton);
     hbox2->addWidget(permanentDeleteButton);
     hbox2->addWidget(saveButton);
+    hbox3->addWidget(loadButton);
 
     vbox->addWidget(mainLabel);
     vbox->addLayout(hbox1);
@@ -82,6 +85,7 @@ Widget::Widget(QWidget *parent)
     connect(doneList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveBackToTaskList(QListWidgetItem*)));
     connect(restoreButton, SIGNAL(clicked(bool)), this, SLOT(restore()));
     connect(permanentDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deletePermanently()));
+    connect(loadButton, SIGNAL(clicked(bool)), this, SLOT(loadFromFile()));
     connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveToFile()));
 }
 
@@ -219,6 +223,61 @@ void Widget::deletePermanently()
     } else {
         QMessageBox::information(this, "No Selection", "Please select a task to delete.");
     }
+}
+
+void Widget::loadFromFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Load Tasks", "", "Text Files (*.txt)");
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "File Error", "Could not open the file for reading.");
+        return;
+    }
+
+    taskList->clear();
+    doneList->clear();
+    recyclingBinList->clear();
+
+    QTextStream in(&file);
+    QString line;
+    enum Section { None, Todo, Done, Recycle } currentSection = None;
+
+    while (!in.atEnd()) {
+        line = in.readLine().trimmed();
+
+        if (line == "To-Do Tasks:") {
+            currentSection = Todo;
+        }
+        else if (line == "Completed Tasks:") {
+            currentSection = Done;
+        }
+        else if (line == "Recycling Bin:") {
+            currentSection = Recycle;
+        }
+        else if (line.startsWith("- ")) {
+            QString task = line.mid(2); // Start after "- "
+
+            switch (currentSection) {
+            case Todo:
+                taskList->addItem(task);
+                break;
+            case Done:
+                doneList->addItem(task);
+                break;
+            case Recycle:
+                recyclingBinList->addItem(task);
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    file.close();
+    QMessageBox::information(this, "Loaded", "Tasks loaded successfully!");
 }
 
 void Widget::saveToFile()
