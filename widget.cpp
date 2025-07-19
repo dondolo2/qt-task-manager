@@ -89,6 +89,16 @@ Widget::Widget(QWidget *parent)
     connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveToFile()));
 }
 
+bool Widget::isDuplicate(QListWidget *list, const QString &text)
+{
+    for (int i = 0; i < list->count(); i++) {
+        if (list->item(i)->text().compare(text, Qt::CaseInsensitive) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void Widget::addTask()
 {
     QString task = taskInput->text().trimmed();
@@ -238,10 +248,6 @@ void Widget::loadFromFile()
         return;
     }
 
-    taskList->clear();
-    doneList->clear();
-    recyclingBinList->clear();
-
     QTextStream in(&file);
     QString line;
     enum Section { None, Todo, Done, Recycle } currentSection = None;
@@ -263,13 +269,28 @@ void Widget::loadFromFile()
 
             switch (currentSection) {
             case Todo:
-                taskList->addItem(task);
+                if (!isDuplicate(taskList, task)) {
+                    QListWidgetItem *item = new QListWidgetItem(task);
+                    item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+                    item->setCheckState(Qt::Unchecked);
+                    taskList->addItem(item);
+                }
                 break;
             case Done:
-                doneList->addItem(task);
+                if (!isDuplicate(doneList, task)) {
+                    QListWidgetItem *item = new QListWidgetItem(task);
+                    item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+                    item->setCheckState(Qt::Checked);
+                    doneList->addItem(item);
+                }
                 break;
             case Recycle:
-                recyclingBinList->addItem(task);
+                if (!isDuplicate(recyclingBinList, task)) {
+                    QListWidgetItem *item = new QListWidgetItem(task);
+                    item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+                    item->setCheckState(Qt::Unchecked);
+                    recyclingBinList->addItem(item);
+                }
                 break;
             default:
                 break;
@@ -277,7 +298,7 @@ void Widget::loadFromFile()
         }
     }
     file.close();
-    QMessageBox::information(this, "Loaded", "Tasks loaded successfully!");
+    QMessageBox::information(this, "Loaded", "Tasks successfully merged with existing lists!");
 }
 
 void Widget::saveToFile()

@@ -33,6 +33,8 @@ private:
     QLabel *doneLabel;
     QLabel *recyclingBinLabel;
 
+    bool isDuplicate(QListWidget *list, const QString &text);
+
 private slots:
     void addTask();
     void moveTaskToBin();
