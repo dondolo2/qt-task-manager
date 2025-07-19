@@ -1,12 +1,15 @@
 To-Do Tasks:
+- walk the dog
 - clean room
 - math project
 
 Completed Tasks:
+- laundry
 - grocery
 - gym
 - study
 
 Recycling Bin:
+- dished
 - respond emails
 - cook
