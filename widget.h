@@ -2,10 +2,12 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QListWidgetItem>
 
 class QLineEdit;
 class QPushButton;
 class QListWidget;
+class QLabel;
 
 class Widget : public QWidget
 {
@@ -13,13 +15,36 @@ class Widget : public QWidget
 
 private:
     QLineEdit *taskInput;
+    // Buttons
     QPushButton *addButton;
-    QPushButton *deleteButton;
+    QPushButton *moveTaskToBinButton;
+    QPushButton *moveDoneToBinButton;
+    QPushButton *restoreButton;
+    QPushButton *permanentDeleteButton;
+    QPushButton *loadButton;
+    QPushButton *saveButton;
+    // List Sections
     QListWidget *taskList;
+    QListWidget *doneList;
+    QListWidget *recyclingBinList;
+    // Labels
+    QLabel *mainLabel;
+    QLabel *taskListLabel;
+    QLabel *doneLabel;
+    QLabel *recyclingBinLabel;
+
+    bool isDuplicate(QListWidget *list, const QString &text);
 
 private slots:
     void addTask();
-    void deleteTask();
+    void moveTaskToBin();
+    void moveDoneToBin();
+    void moveTaskToDone(QListWidgetItem *item);
+    void moveBackToTaskList(QListWidgetItem *item);
+    void restore();
+    void deletePermanently();
+    void loadFromFile();
+    void saveToFile();
 
 
 public:

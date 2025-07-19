@@ -15,6 +15,8 @@ SOURCES += \
 HEADERS += \
     widget.h
 
+OTHER_FILES += checklist.md
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
