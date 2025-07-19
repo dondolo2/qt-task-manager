@@ -22,7 +22,8 @@ Widget::Widget(QWidget *parent)
     taskInput->setPlaceholderText("Enter a new task...");
 
     addButton = new QPushButton("Add Task", this);
-    moveToBinButton = new QPushButton("Move To Bin", this);
+    moveTaskToBinButton = new QPushButton("Move Task To Bin", this);
+    moveDoneToBinButton = new QPushButton("Move Done To Bin", this);
     restoreButton = new QPushButton("Restore Task", this);
     permanentDeleteButton = new QPushButton("Delete Permanently");
     saveButton = new QPushButton("Save to File", this);
@@ -62,9 +63,10 @@ Widget::Widget(QWidget *parent)
     vbox->addLayout(hbox1);
     vbox->addWidget(taskListLabel);
     vbox->addWidget(taskList);
+    vbox->addWidget(moveTaskToBinButton);
     vbox->addWidget(doneLabel);
     vbox->addWidget(doneList);
-    vbox->addWidget(moveToBinButton);
+    vbox->addWidget(moveDoneToBinButton);
     vbox->addWidget(recyclingBinLabel);
     vbox->addWidget(recyclingBinList);
     vbox->addLayout(hbox2);
@@ -74,7 +76,8 @@ Widget::Widget(QWidget *parent)
 
     connect(addButton, SIGNAL(clicked(bool)), this, SLOT(addTask()));
     connect(taskInput, SIGNAL(returnPressed()), this, SLOT(addTask()));
-    connect(moveToBinButton, SIGNAL(clicked(bool)), this, SLOT(moveToBin()));
+    connect(moveTaskToBinButton, SIGNAL(clicked(bool)), this, SLOT(moveTaskToBin()));
+    connect(moveDoneToBinButton, SIGNAL(clicked(bool)), this, SLOT(moveDoneToBin()));
     connect(taskList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveTaskToDone(QListWidgetItem*)));
     connect(doneList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(moveBackToTaskList(QListWidgetItem*)));
     connect(restoreButton, SIGNAL(clicked(bool)), this, SLOT(restore()));
@@ -119,36 +122,39 @@ void Widget::addTask()
     taskInput->setFocus();
 }
 
-void Widget::moveToBin()
+void Widget::moveTaskToBin()
 {
     QListWidgetItem *taskItem = taskList->currentItem();
-    QListWidgetItem *doneItem = doneList->currentItem();
-
-    QListWidgetItem *selectedItem = taskItem ? taskItem : doneItem;
-
-    if (!selectedItem) {
+    if (!taskItem) {
         QMessageBox::information(this, "No Selection", "Please select a task to move to bin");
         return;
     }
 
-    QListWidgetItem *binItem = new QListWidgetItem(selectedItem->text());
+    QListWidgetItem *binItem = new QListWidgetItem(taskItem->text());
     binItem->setFlags(binItem->flags() | Qt::ItemIsUserCheckable);
-    binItem->setCheckState(selectedItem->checkState());
-    // Save source as Metadata
-    if (taskItem) {
-        binItem->setData(Qt::UserRole, "taskItem");
-    } else if (doneItem) {
-        binItem->setData(Qt::UserRole, "doneItem");
-    }
+    binItem->setCheckState(taskItem->checkState());
+    binItem->setData(Qt::UserRole, "todo");
 
     recyclingBinList->addItem(binItem);
+    delete taskItem;
 
-    if (taskItem) {
-        delete taskItem;
-    } else if (doneItem) {
-        delete doneItem;
+}
+
+void Widget::moveDoneToBin()
+{
+    QListWidgetItem *doneItem = doneList->currentItem();
+    if (!doneItem) {
+        QMessageBox::information(this, "No Selection", "Please select a completed task to move to bin");
+        return;
     }
 
+    QListWidgetItem *binItem = new QListWidgetItem(doneItem->text());
+    binItem->setFlags(binItem->flags() | Qt::ItemIsUserCheckable);
+    binItem->setCheckState(doneItem->checkState());
+    binItem->setData(Qt::UserRole, "done");
+
+    recyclingBinList->addItem(binItem);
+    delete doneItem;
 }
 
 
@@ -165,6 +171,7 @@ void Widget::moveTaskToDone(QListWidgetItem *item)
     }
 
 }
+
 
 void Widget::moveBackToTaskList(QListWidgetItem *item)
 {
@@ -193,7 +200,7 @@ void Widget::restore()
     restoredItem->setFlags(restoredItem->flags() | Qt::ItemIsUserCheckable);
     restoredItem->setCheckState(restoredItem->checkState());
 
-    if (source == "doneItem") {
+    if (source == "done") {
         restoredItem->setCheckState(Qt::Checked);
         doneList->addItem(restoredItem);
     } else {

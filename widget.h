@@ -17,7 +17,8 @@ private:
     QLineEdit *taskInput;
     // Buttons
     QPushButton *addButton;
-    QPushButton *moveToBinButton;
+    QPushButton *moveTaskToBinButton;
+    QPushButton *moveDoneToBinButton;
     QPushButton *restoreButton;
     QPushButton *permanentDeleteButton;
     QPushButton *saveButton;
@@ -33,7 +34,8 @@ private:
 
 private slots:
     void addTask();
-    void moveToBin();
+    void moveTaskToBin();
+    void moveDoneToBin();
     void moveTaskToDone(QListWidgetItem *item);
     void moveBackToTaskList(QListWidgetItem *item);
     void restore();
