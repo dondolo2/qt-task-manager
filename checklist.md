@@ -1,69 +1,64 @@
-# ✅ Development Planning Checklist for Action Board Tracker
-
-## 🎯 Project Goal
-Build a desktop Task Manager using Qt (C++) that helps users:
-- Add, complete, restore, delete, and permanently remove tasks.
-- Organize tasks into To-Do, Done, and Recycle sections.
-- Toggle between light and dark themes.
-- Save and load tasks from file.
-- Have an intuitive, styled GUI with mouse and scroll support.
+# ✅ Qt Task Manager App Development Checklist
 
 ---
 
-## ✅ UI Components
-- [x] Main window with fixed size and emoji title
-- [x] Title label with shadow and custom font
-- [x] QLineEdit for task input
-- [x] Add Task button
-- [x] Theme toggle button (☀️/🌙)
-- [x] Scrollable central area for layouts
-- [x] Labels for task categories (To-Do, Completed, Bin)
-- [x] Three QListWidgets (To-Do, Done, Recycling Bin)
-- [x] Buttons for:
-  - Move Task to Bin
-  - Move Done to Bin
-  - Restore Task
-  - Permanently Delete
-  - Load from File
-  - Save to File
+## 🛠️ 1. Project Setup
+- [ ] Create Qt Widgets Application (no form)
+- [ ] Set base class to QWidget
+- [ ] Confirm files: `main.cpp`, `widget.h`, `widget.cpp`, `.pro`
+- [ ] Initialize Git repository
+- [ ] Create and push `test` branch
+- [ ] Add and commit `checklist.md`
 
 ---
 
-## 🎨 Styling Requirements
-- [x] Custom QSS for light and dark modes
-- [x] Button hover effects
-- [x] Emoji icons on labels
-- [x] Font sizing and spacing consistency
-- [x] Scrollbar customization
-- [x] Mouse pointer cursor for interactivity
+## 🎨 2. UI Layout
+- [ ] Create QLineEdit for task input
+- [ ] Add QPushButton to add task
+- [ ] Create QListWidget to display tasks
+- [ ] Add a checkbox or icon per task for status
+- [ ] Organize widgets using QVBoxLayout or QGridLayout
+- [ ] Add styling with Qt Stylesheets
 
 ---
 
-## 💾 File Handling
-- [x] Save task lists (To-Do, Done, Bin) to text file
-- [x] Load and merge from text file
+## 💾 3. Task Management Logic
+- [ ] Connect "Add" button to slot function
+- [ ] Append task to QListWidget on click
+- [ ] Add functionality to delete selected task
+- [ ] Add functionality to mark task as complete/incomplete
+- [ ] Add signal-slot connections for dynamic interactivity
+- [ ] Optional: Implement task editing on double-click
 
 ---
 
-## ♻️ Task Logic
-- [x] Prevent duplicates across lists
-- [x] Move checked tasks to "Done"
-- [x] Move unchecked from Done → To-Do
-- [x] Move items to/from recycle bin
-- [x] Mark origin (To-Do or Done) for restoration
-- [x] Allow permanent deletion
+## 🧠 4. Data Persistence (Basic)
+- [ ] Save task list to a text file or JSON
+- [ ] Load tasks from file when app starts
+- [ ] Include task status (complete/incomplete) in file
 
 ---
 
-## 🔄 Theme Switching
-- [x] Theme toggle using emoji button
-- [x] Load `light.qss` and `dark.qss` stylesheets
-- [x] Default dark mode
+## 🗃️ 5. Task Metadata (Advanced Features)
+- [ ] Add due date field (using QDateEdit or QCalendarWidget)
+- [ ] Add dropdown or tags for categories (e.g., Work, Personal)
+- [ ] Implement filter view (e.g., show only Work tasks)
+- [ ] Add sort option (e.g., by date or category)
 
 ---
 
-## 🧪 Optional Extras (Stretch Goals)
-- [ ] Sort tasks alphabetically or by timestamp
-- [ ] Add due dates or priority levels
-- [ ] Search/filter tasks
-- [ ] Export to other formats (e.g. CSV, JSON)
+## 🚀 6. Polish & UX
+- [ ] Add confirmation dialog for deleting a task
+- [ ] Add status bar or feedback label for actions
+- [ ] Add icons to buttons (e.g., trash bin, checkmark)
+- [ ] Make UI responsive and well-aligned
+- [ ] Add keyboard shortcuts (e.g., Enter to add task)
+
+---
+
+## 🧪 7. Final Touches & Git
+- [ ] Test app flow end-to-end
+- [ ] Commit and push after each milestone
+- [ ] Create a `feature/ui`, `feature/storage` etc. branches for major work
+- [ ] Merge to `main` only after full testing
+- [ ] Tag first working version as `v1.0`

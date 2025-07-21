@@ -1,93 +1,93 @@
-# 📝 Action Board Tracker – Qt Task Manager
+# 📝 Action Board Tracker
 
-This is a **desktop-based Task Manager application** built using **Qt (C++ framework)**. The app is designed to help users track their tasks, mark them as complete, move them to a recycle bin, and restore or permanently delete them. Users can also save tasks to a file and load them back later without overwriting existing data (merge behavior).
+A modern, stylish, emoji-enhanced desktop task manager built using **Qt6 and C++**. Designed for users who want to track To-Do tasks, Completed items, and Deleted (Recycle Bin) entries with smooth scrollable views, themes, and file persistence.
 
 ---
 
 ## 🚀 Features
 
-- ✅ Add new tasks to the To-Do list
-- ✅ Mark tasks as completed (checkbox)
-- ✅ Unmark completed tasks to return to To-Do
-- ♻️ Move tasks to a **Recycling Bin** (with separate buttons for To-Do and Done tasks)
-- 🔁 Restore tasks from Recycling Bin to original list
-- ❌ Permanently delete tasks from the bin
-- 💾 Save tasks to a `.txt` file
-- 📂 Load tasks from a file (merges with current tasks, avoids duplicates)
+✅ Add new tasks with a simple input bar  
+✅ Mark tasks as complete with checkbox interaction  
+✅ Automatically move tasks between To-Do and Done  
+✅ Send tasks to a Recycle Bin for safe deletion  
+✅ Restore tasks or permanently delete them  
+✅ Save and load tasks to/from `.txt` files  
+✅ Light 🌙 / Dark ☀️ theme toggle  
+✅ Custom emojis, tooltips, and shadowed UI title  
+✅ Scrollable UI and custom scrollbar  
+✅ Hover effects, bold fonts, and intuitive layout  
 
 ---
 
-## 📁 File Structure
+## 🖥️ UI Preview
 
-- `widget.h` – Header file declaring the UI components and slots
-- `widget.cpp` – Core logic and UI layout using Qt Widgets
-- `main.cpp` – Standard Qt application entry point
-- `resources.qrc` – (Optional) Add for icons or future styling
-
----
-
-## 💡 How Tasks Are Handled
-
-- **To-Do Tasks**: Unchecked tasks
-- **Completed Tasks**: Checked tasks
-- **Recycling Bin**: Stores deleted tasks along with metadata (`todo` or `done`)
-- **File Saving Format**:
-- **To-Do Tasks**:
-- ***Task 1***:
-- ***Task 2***:
-- **Completed Tasks**:
-- ***Task A***:
-- ***Task B***:
-- **Recycling Bin**:
-- ***Task Y***:
-- ***Task Z***:
-
+- **To-Do Section** 📋  
+- **Completed Tasks** ✅  
+- **Recycle Bin** 🗑️  
+- **Main Title:** 📝 *Action Board Tracker*
 
 ---
 
-## 🛠️ Requirements
+## 🎨 Theming
 
-- Qt 5 or 6 (Tested with Qt 6.x)
-- C++17 or later
-- Qt Creator (recommended) or any C++ IDE with qmake or CMake support
-
----
-
-## 🧪 How to Build & Run
-
-1. Clone the repository
-2. Open `*.pro` or `CMakeLists.txt` in Qt Creator
-3. Click **Build** and **Run**
-
----
-
-## 🛣️ Planned Features (Suggestions)
-
-- [ ] Dark mode / themes
-- [ ] Drag-and-drop between lists
-- [ ] Due dates and reminders
-- [ ] JSON file format support
-- [ ] Sync with cloud or GitHub gist
-
----
-
-## 📸 Preview (Optional)
-
-*You can add a screenshot here in future:*
+Switch between light and dark modes using the theme toggle button (☀️/🌙). Themes are defined using external `.qss` stylesheets.
 
 
+    applyTheme(":/light.qss");
+    applyTheme(":/dark.qss"); ```
 
----
+## 💾 Save & Load Format
+Text files are organized like so:
 
-## 📄 License
+text
+Copy
+Edit
+### To-Do Tasks:
+- Buy groceries
+- Finish report
 
-This project is for learning purposes and open for modification or reuse under the **MIT License**.
+### Completed Tasks:
+- Submit project
 
----
+### Recycling Bin:
+- Old task
 
-## 👨‍💻 Author
+## 🧩 Built With
+Qt 6 (C++)
 
-**Musa Dondolo**  
-Freelance Developer  
-[GitHub Profile](https://github.com/dondolo2) (Replace this with your link)
+> Qt Creator
+> Qt Designer / Custom QSS
 
+> Widgets: QListWidget, QPushButton, QLabel, QLineEdit, QScrollArea
+
+> File Handling: QTextStream, QFileDialog
+
+## 🛠️ Build Instructions
+
+    qmake
+    make
+    ./TaskManagerProject
+    
+Ensure your .qrc file contains resources like:
+
+    <qresource prefix="/">
+        <file>dark.qss</file>
+        <file>light.qss</file>
+        <file>list.png</file>
+    </qresource>
+
+## 📂 File Structure
+
+    TaskManagerProject/
+    ├── widget.h / widget.cpp
+    ├── main.cpp
+    ├── dark.qss / light.qss
+    ├── icons/ (e.g. list.png)
+    └── TaskManagerProject.pro
+
+##🙌 Acknowledgements
+
+This project was developed as part of a Qt6 C++ UNISA(University of South Africa) course. Great for beginners exploring widget-based GUI applications with custom styling and user interactivity.
+
+## 📜 License
+This project is for portfolio/demo purposes only. Feel free to use or adapt it as inspiration!
