@@ -1,0 +1,73 @@
+QWidget#MainContainer {
+    max-width: 2000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+QWidget {
+    background-color: gray;
+    color: #1f1f1f;
+    font-family: 'Segoe UI';
+}
+QLineEdit {
+    font-size: 15px;
+    background-color: #ffffff;
+    padding: 12px;
+    border: 1px solid #d1d1d1;
+    border-radius: 5px;
+    font-weight: bold;
+}
+QPushButton {
+    background-color: purple;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 5px;
+}
+QPushButton:hover {
+    background-color: magenta;
+    font-weight: bold;
+}
+QWidget#addBtn:hover {
+    font-weight: none;
+}
+QListWidget {
+    background-color: #e5e3e3ff;
+    border: 1px solid #969292ff;
+    min-height: 150px;
+    font-weight: bold;
+    font-size: 20px;
+}
+QListWidget:item {
+    qproperty-cursor: PointingHandCursor;
+    margin: 0;
+}
+QListWidget:item:hover {
+    background-color: magenta;
+}
+QLabel {
+    color: #000000;
+    background-color: gray;
+    font-style: bold;
+    font-size: 16px;
+}
+QLabel#mainLabel {
+    font-size: 32px;
+    font-weight: bold;
+}
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+QScrollBar:vertical {
+    border: none;
+    background: gray;
+    width: 10px;
+    margin: 0px 0px 0px 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: black;
+    min-height: 20px;
+    border-radius: 4px;
+}
+
