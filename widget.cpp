@@ -1,4 +1,5 @@
 #include "widget.h"
+
 #include <QLineEdit>
 #include <QPushButton>
 #include <QListWidget>
@@ -10,13 +11,18 @@
 #include <QFile>
 #include <QTextStream>
 #include <QFileDialog>
+#include <QApplication>
+#include <QDebug>
 
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
-    setWindowTitle("Task Manager");
+    setWindowTitle("Action Board Tracker");
     resize(700, 500);
+    this->setWindowIcon(QIcon(":/list.png"));
+    this->setObjectName("MainContainer");
+
 
     taskInput = new QLineEdit(this);
     taskInput->setPlaceholderText("Enter a new task...");
@@ -28,32 +34,70 @@ Widget::Widget(QWidget *parent)
     permanentDeleteButton = new QPushButton("Delete Permanently");
     loadButton = new QPushButton("Load from File", this);
     saveButton = new QPushButton("Save to File", this);
+    loadButton->setObjectName("loadBtn");
 
-    mainLabel = new QLabel("Action Board Tracker", this);
+    addButton->setToolTip("Click to add a new task");
+    addButton->setObjectName("addBtn");
+
+
+    mainLabel = new QLabel("📝 Action Board Tracker", this);
     QFont titleFont;
-    titleFont.setPointSize(18);
+    titleFont.setPointSize(25);
     titleFont.setBold(true);
     mainLabel->setFont(titleFont);
     mainLabel->setAlignment(Qt::AlignCenter);
+    mainLabel->setObjectName("mainLabel");
+    QGraphicsDropShadowEffect* shadow = new QGraphicsDropShadowEffect();
+    shadow->setBlurRadius(10);
+    shadow->setOffset(2, 2);
+    mainLabel->setGraphicsEffect(shadow);
 
 
-    taskListLabel = new QLabel("To-Do Task", this);
-    doneLabel = new QLabel("Completed Tasks", this);
-    recyclingBinLabel = new QLabel("Recycling Bin", this);
-    QFont labelFont;
-    labelFont.setBold(true);
-    taskListLabel->setFont(labelFont);
-    doneLabel->setFont(labelFont);
-    recyclingBinLabel->setFont(labelFont);
+
+    taskListLabel = new QLabel("📋 To-Do Tasks", this);
+    doneLabel = new QLabel("✅ Completed Tasks", this);
+    recyclingBinLabel = new QLabel("🗑️ Recycling Bin", this);
+
+    QFont sectionFont;
+    sectionFont.setPointSize(14);
+    sectionFont.setBold(true);
+
+    QFont listFont;
+    sectionFont.setPointSize(16);
+    sectionFont.setBold(true);
+
+    taskListLabel->setFont(sectionFont);
+    doneLabel->setFont(sectionFont);
+    recyclingBinLabel->setFont(sectionFont);
 
     taskList = new QListWidget(this);
+    taskList->setFont(listFont);
     doneList = new QListWidget(this);
+    doneList->setFont(listFont);
     recyclingBinList = new QListWidget(this);
+    recyclingBinList->setFont(listFont);
 
-    QVBoxLayout *vbox = new QVBoxLayout(this);
-    QHBoxLayout *hbox1 = new QHBoxLayout(this);
-    QHBoxLayout *hbox2 = new QHBoxLayout(this);
-    QHBoxLayout *hbox3 = new QHBoxLayout(this);
+    // Theme toggle button
+    themeToggleBtn = new QPushButton("☀️", this); // 🌙 = dark mode, ☀️ = light mode
+    themeToggleBtn->setFixedSize(60, 35);
+    themeToggleBtn->move(width() - themeToggleBtn->width() - 10, 10); // Top-right corner
+    themeToggleBtn->setToolTip("Click to change theme");
+
+
+    // Create scroll area and content widget
+    QScrollArea *scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(true);
+
+    QWidget *scrollContent = new QWidget();
+    scrollContent->setObjectName("MainContainer");
+
+    QVBoxLayout *vbox = new QVBoxLayout(scrollContent);
+    QHBoxLayout *hbox1 = new QHBoxLayout();
+    QHBoxLayout *hbox2 = new QHBoxLayout();
+    QHBoxLayout *hbox3 = new QHBoxLayout();
+
+    vbox->setContentsMargins(50, 50, 50, 50);
+    vbox->setSpacing(12);
 
     hbox1->addWidget(taskInput);
     hbox1->addWidget(addButton);
@@ -61,7 +105,9 @@ Widget::Widget(QWidget *parent)
     hbox2->addWidget(permanentDeleteButton);
     hbox2->addWidget(saveButton);
     hbox3->addWidget(loadButton);
+    hbox3->addWidget(themeToggleBtn);
 
+    vbox->addLayout(hbox3);
     vbox->addWidget(mainLabel);
     vbox->addLayout(hbox1);
     vbox->addWidget(taskListLabel);
@@ -75,7 +121,15 @@ Widget::Widget(QWidget *parent)
     vbox->addLayout(hbox2);
 
 
-    setLayout(vbox);
+    // Set scroll content and layout
+    scrollArea->setWidget(scrollContent);
+
+    // Outer layout for scroll area
+    QVBoxLayout *outerLayout = new QVBoxLayout(this);
+    outerLayout->addWidget(scrollArea);
+    // outerLayout->addWidget(themeToggleBtn); // Keeps toggle on top-level (not scrollable)
+    setLayout(outerLayout);
+
 
     connect(addButton, SIGNAL(clicked(bool)), this, SLOT(addTask()));
     connect(taskInput, SIGNAL(returnPressed()), this, SLOT(addTask()));
@@ -87,6 +141,32 @@ Widget::Widget(QWidget *parent)
     connect(permanentDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deletePermanently()));
     connect(loadButton, SIGNAL(clicked(bool)), this, SLOT(loadFromFile()));
     connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveToFile()));
+    // connect(themeToggleBtn, &QPushButton::clicked, this, &Widget::toggleTheme);
+
+    bool isDarkMode = true; // Start with dark mode
+
+    connect(themeToggleBtn, &QPushButton::clicked, this, [=]() mutable {
+        if (isDarkMode) {
+            QFile file(":/light.qss");
+            if (file.open(QFile::ReadOnly)) {
+                QString style = QLatin1String(file.readAll());
+                this->setStyleSheet(style);
+                themeToggleBtn->setText("🌙");
+            }
+        } else {
+            QFile file(":/dark.qss");
+            if (file.open(QFile::ReadOnly)) {
+                QString style = QLatin1String(file.readAll());
+                this->setStyleSheet(style);
+                themeToggleBtn->setText("☀️");
+            }
+        }
+        isDarkMode = !isDarkMode;
+    });
+
+    applyTheme(":/light.qss");
+    applyTheme(":/dark.qss");
+
 }
 
 bool Widget::isDuplicate(QListWidget *list, const QString &text)
@@ -343,6 +423,30 @@ void Widget::saveToFile()
 
     file.close();
     QMessageBox::information(this, "Saved", "Tasks saved successfully!");
+}
+
+void Widget::toggleTheme()
+{
+    if (currentTheme == "light") {
+        applyTheme(":/dark.qss");
+        currentTheme = "dark";
+        themeToggleBtn->setText("☀️");
+    } else {
+        applyTheme(":/light.qss");
+        currentTheme = "light";
+        themeToggleBtn->setText("🌙");
+    }
+}
+
+void Widget::applyTheme(const QString &resourcePath)
+{
+    QFile file(resourcePath);
+    if (file.open(QFile::ReadOnly | QFile::Text)) {
+        QString styleSheet = file.readAll();
+        qApp->setStyleSheet(styleSheet);
+    } else {
+        qDebug() << "Failed to theme:" << resourcePath;
+    }
 }
 
 

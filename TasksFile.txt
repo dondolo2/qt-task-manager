@@ -1,5 +1,4 @@
 To-Do Tasks:
-- walk the dog
 - clean room
 - math project
 
@@ -13,3 +12,4 @@ Recycling Bin:
 - dished
 - respond emails
 - cook
+- walk the dog

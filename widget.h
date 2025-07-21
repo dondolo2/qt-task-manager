@@ -3,11 +3,14 @@
 
 #include <QWidget>
 #include <QListWidgetItem>
+#include <QScrollArea>
+#include <QGraphicsDropShadowEffect>
 
 class QLineEdit;
 class QPushButton;
 class QListWidget;
 class QLabel;
+class QScrollBar;
 
 class Widget : public QWidget
 {
@@ -23,6 +26,7 @@ private:
     QPushButton *permanentDeleteButton;
     QPushButton *loadButton;
     QPushButton *saveButton;
+    QPushButton *themeToggleBtn;
     // List Sections
     QListWidget *taskList;
     QListWidget *doneList;
@@ -33,7 +37,14 @@ private:
     QLabel *doneLabel;
     QLabel *recyclingBinLabel;
 
+    QString currentTheme = "light";
+    QWidget *central;
+    QScrollArea *scrollArea;
+    QWidget *scrollContent;
+    QGraphicsDropShadowEffect* shadow;
+
     bool isDuplicate(QListWidget *list, const QString &text);
+
 
 private slots:
     void addTask();
@@ -45,6 +56,9 @@ private slots:
     void deletePermanently();
     void loadFromFile();
     void saveToFile();
+    void toggleTheme();
+
+    void applyTheme(const QString &resourcePath);
 
 
 public:
