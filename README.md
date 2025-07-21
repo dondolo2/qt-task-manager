@@ -1,6 +1,8 @@
 # 📝 Action Board Tracker
 
 A modern, stylish, emoji-enhanced desktop task manager built using **Qt6 and C++**. Designed for users who want to track To-Do tasks, Completed items, and Deleted (Recycle Bin) entries with smooth scrollable views, themes, and file persistence.
+### 💡 Light Theme
+![Light Theme](Screenshots/lightTheme.png)
 
 ---
 
@@ -35,6 +37,39 @@ Switch between light and dark modes using the theme toggle button (☀️/🌙).
 
     applyTheme(":/light.qss");
     applyTheme(":/dark.qss"); ```
+
+
+## 📸 Screenshots
+
+### 🪟 Default Window
+![Default Window](Screenshots/defaultWindow.png)
+![Default Window 2](Screenshots/defaultWindow2.png)
+
+### 📂 Loading File
+![Loading File](Screenshots/loadingFile.png)
+![Loading File 2](Screenshots/loadingFile2.png)
+
+
+
+### 🌙 Dark Theme
+![Dark Theme](Screenshots/darkTheme.png)
+
+### ➕ Add Task Input
+![Add Task Input](Screenshots/addTaskInput.png)
+
+### ✅ Completed Task
+![Completed Task](Screenshots/completedTask.png)
+
+### 🔁 Restore Task
+![Restore Task](Screenshots/restoreTask.png)
+
+### 📝 App Icon
+![Restore Task](Screenshots/appIcon.png)
+
+### 💾 File Save
+![File Save](Screenshots/fileSave.png)
+![File Save 2](Screenshots/fileSave2.png)
+
 
 ## 💾 Save & Load Format
 Text files are organized like so:
