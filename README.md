@@ -120,7 +120,7 @@ Ensure your .qrc file contains resources like:
     ├── icons/ (e.g. list.png)
     └── TaskManagerProject.pro
 
-##🙌 Acknowledgements
+## 🙌 Acknowledgements
 
 This project was developed as part of a Qt6 C++ UNISA(University of South Africa) course. Great for beginners exploring widget-based GUI applications with custom styling and user interactivity.
 
